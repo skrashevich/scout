@@ -1,0 +1,60 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        go-version: [1.21.x]
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Setup Go environment
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+    - name: install gocv
+      if: runner.os == 'Linux'
+      run: | 
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+        go get -u -d gocv.io/x/gocv@v0.33.0
+        cd `go env GOMODCACHE`/gocv.io/x/gocv@v0.33.0
+        make install
+    - name: install gocv
+      if: runner.os == 'macOS'
+      run: | 
+        brew install opencv
+        brew install pkgconfig
+        brew shellenv
+        export PKG_CONFIG_PATH=`brew list opencv | grep 'opencv4.pc' | xargs dirname`
+
+    - name: Download dependencies
+      run: go mod download
+
+    - name: Build binary
+      run: |
+        mkdir ./build
+        go build -v -o ./build/ ./...
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: scout-${{ matrix.os }}
+        path: ./build
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      timeout-minutes: 15
