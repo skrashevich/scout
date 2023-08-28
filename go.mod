@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/cloudfoundry/gosigar v1.3.22
 	github.com/cskr/pubsub v1.0.2
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/gofiber/jwt/v2 v2.2.7
@@ -23,7 +24,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0
 	github.com/valyala/fasthttp v1.43.0 // indirect
 	gocv.io/x/gocv v0.30.0
-	golang.org/x/sys v0.3.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
